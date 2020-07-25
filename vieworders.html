@@ -1,0 +1,51 @@
+{% extends 'orders/base.html' %}
+{% block title %}Pending Orders{%endblock%}
+{%block tt%} 
+  {% if empty %}
+    <h1>Pending Orders <span class="badge badge-secondary">0</span></h1>
+  {% else %}
+  All pending orders
+  {%endif%}
+{%endblock%}
+{% block body %}
+{% if not empty %}
+{% for key,value in dic.items %}
+<table class="table table-bordered">
+    <thead class="thead-dark">
+        <tr>
+          <th scope="col">Order #{{key.pk}} 
+          <a href="{% url 'markcomplete' key.pk %}" class="btn btn-outline-success">Mark as completed</a>
+          </th>
+          <th scope="col">Current Status: [ {{key.status}} ] Ordered Date: {{key.date}} User: {{key.user}} </th>
+          <th scope="col">Total: ${{key.total}}</th>
+        </tr>
+    </thead>
+    <thead class="thead">
+      <tr>
+        <th scope="col">Item</th>
+        <th scope="col">Size</th>
+        <th scope="col">Price</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for cart_item in value %}
+        <tr>
+            <th scope="row">
+            {{cart_item.item_detail}}
+                {% if cart_item.topping.all %}
+                <span class="text-muted">[
+                {%for topping in cart_item.topping.all %}
+                {{topping.name}} 
+                {%endfor%}
+                ]</span>
+                {%endif%}
+            </th>
+            <td>{{cart_item.size}}</td>
+            <td>${{cart_item.price}}</td>
+        </tr>
+    {%endfor%}
+    </tbody>
+</table><br><br>
+{%endfor%}
+{%endif%}
+{%endblock%}
