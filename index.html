@@ -1,0 +1,85 @@
+{% extends 'orders/base.html' %}
+{% block title %} 
+    Home
+{% endblock %}
+{%block tt%}
+{% if not item_cats %}
+<h1>No Items! Please add some items through admin interface <a href="/admin" class="badge badge-secondary">Admin Panel</a></h1>
+{%endif%}
+{%endblock%}
+{% block body %}
+    {%for item_cat in item_cats %}
+    <h3 id="{{item_cat.name}}" style="text-align: center;"><strong>{{item_cat.name}}</strong></h3>
+    <div class="row row-cols-1 row-cols-md-3">
+        {% for item in items %}
+            {% if item.category == item_cat %}
+            <div class="col mb-4">
+                <div class="card h-100"">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <strong>
+                                {{item.name}} 
+                                {%if item.item_type != none %}
+                                    [ <span class="text-muted">{{item.item_type}}</span> ]
+                                {%endif%}
+                            </strong>
+                            <button style="float: right;" class="btn btn-outline-primary" data-toggle="modal" data-target="#item-{{item.id}}-modal">Add to cart</button>
+                        </h5>
+                        <p class="card-text">Small: {{item.price_small}}<br>Large: {{item.price_large}} </strong></p>
+                    </div>
+                </div>
+            </div>
+
+            {%endif%}
+        {%endfor%}
+    </div><hr>
+        {% for item in items %}
+            {% if item.category == item_cat %}
+            <!-- Create modal for this item -->
+            <div class="modal fade" id="item-{{item.id}}-modal" tabindex="-1" role="dialog" aria-labelledby="item-{{item.id}}-modal-CenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Customize <strong>{{item.name}}</strong></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    <div class="modal-body">
+                        <form onsubmit="AlertUser('{{item.id}}')" action="{% url 'add_item' %}" method="POST">
+                            {%csrf_token%}
+                            <input name="item-id" type="hidden" value="{{item.id}}">
+                            {% if item.max_topping %}
+                            <input name="max-topping" type="hidden" value="{{item.max_topping}}">
+                                {% for i in item.max_topping %}
+                                    <div class="form-group">
+                                    <label for="exampleFormControlSelect1">Select Topping {{i}}</label>
+                                    <select name="select-{{i}}" class="form-control" id="exampleFormControlSelect1">
+                                        {% for topping in toppings %}
+                                        <option value="{{topping.id}}">{{topping.name}}</option>
+                                        {%endfor%}
+                                    </select>
+                                    </div>
+                                {%endfor%}
+                            {%endif%}
+                            <div class="form-group">
+                            <label for="exampleFormControlSelect1">Select Size</label>
+                            <select name="size-select" class="form-control" id="exampleFormControlSelect1">
+                                {% if item.price_small %}
+                                    <option value="S">Small</option>
+                                {%endif%}
+                                {% if item.price_large %}
+                                    <option value="L">Large</option>
+                                {%endif%}
+                            </select>
+                            </div>
+                            <button style="float: right;" type="submit" class="btn btn-primary">Add to cart</button>
+                        </form>
+                    </div>
+                </div>
+                </div>
+            </div>
+            {%endif%}
+        {%endfor%}
+    {%endfor%}
+{%endblock%}

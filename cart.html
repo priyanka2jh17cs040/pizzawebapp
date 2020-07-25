@@ -1,0 +1,49 @@
+{% extends 'orders/base.html' %}
+{% block title %}Cart{%endblock%}
+{%block tt%} 
+  {% if empty %}
+    <h1>Your cart is empty <a href="{% url 'home' %}" class="badge badge-secondary">Visit Menu</a></h1>
+  {% else %}
+  {{request.user}}'s Cart 
+  {%endif%}
+{%endblock%}
+{% block body %}
+{% if not empty %}
+<table class="table">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">Item</th>
+        <th scope="col">Size</th>
+        <th scope="col">Price</th>
+        <th scope="col"><a class="btn btn-secondary" data-toggle="tooltip"  title="Removes all items from cart" href="{% url 'empty_cart' %}">Empty Cart</a></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for cart_item in cart_items %}
+        <tr>
+            <th scope="row">
+            {{cart_item.item_detail}}
+                {% if cart_item.topping.all %}
+                <span class="text-muted">[
+                {%for topping in cart_item.topping.all %}
+                {{topping.name}} 
+                {%endfor%}
+                ]</span>
+                {%endif%}
+            </th>
+            <td>{{cart_item.size}}</td>
+            <td>${{cart_item.price}}</td>
+            <td><a href="{% url 'remove_item' cart_item.pk %}">Remove item</a></td>
+        </tr>
+    {%endfor%}
+    </tbody>
+</table><br><br>
+<div class="jumbotron">
+  <h1 class="display-5">Total: ${{cart.total}}</h1>
+  <p class="lead">Amount Payable</p>
+  <hr class="my-4">
+  <p>Click here to confirm and place your order</p>
+  <a class="btn btn-primary btn-lg" href="{% url 'order' %}" role="button">Order Now</a>
+</div>
+{%endif%}
+{%endblock%}

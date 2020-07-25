@@ -1,0 +1,17 @@
+ {% extends 'orders/base.html' %}
+{% block title %}Login{%endblock%}
+{%block tt%} Login {%endblock%}
+{% block body %}
+<form action="{% url 'login' %}" method="POST">
+  {% csrf_token %}
+  <div class="form-group">
+    <label for="exampleInputEmail1">User Name</label>
+    <input type="text" class="form-control" id="exampleInputEmail1" name="username" aria-describedby="emailHelp">
+  </div>
+  <div class="form-group">
+    <label for="exampleInputPassword1">Password</label>
+    <input type="password" name="password" class="form-control" id="exampleInputPassword1">
+  </div><br>
+  <button type="submit" class="btn btn-outline-primary btn-lg btn-block">Confirm Identity</button>
+</form>
+{%endblock%}
